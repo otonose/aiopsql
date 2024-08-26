@@ -4,8 +4,8 @@
 ## Installation
 To install this package, clone the repository and install the required dependencies:
 ```bash
-git clone https://github.com/yourusername/python-async-db-postgresql.git
-cd python-async-db-postgresql
+git clone https://github.com/otonose/aiopsql.git
+cd aiopsql
 pip install -r requirements.txt
 ```
 
