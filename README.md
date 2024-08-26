@@ -39,3 +39,17 @@ from async_db_postgresql import db
 async def insert_data():
     await db.insert(SomeModel, values_params=[{"column1": "value1", "column2": "value2"}])
 ```
+#### Updating Data
+```py
+from async_db_postgresql import db
+
+async def update_data():
+    await db.update(SomeModel, where_clause=SomeModel.id == 1, value_params={"column": "new_value"})
+```
+#### Deleting Data
+```py
+from async_db_postgresql import db
+
+async def delete_data():
+    await db.delete(SomeModel, where_clause=SomeModel.id == 1)
+```
