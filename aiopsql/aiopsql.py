@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 class AsyncDatabase:
     def __init__(
         self,
-        user: "str",
-        password: "str",
         dialect: "str" = "asyncpg",
+        user: "str" = "postgres",
+        password: "str | None" = None,
         host: "str" = "localhost",
         port: "int" = 5432,
         database_name: "str" = "postgres",
@@ -28,12 +28,16 @@ class AsyncDatabase:
         self,
         dialect: "str",
         user: "str",
-        password: "str",
+        password: "str | None",
         host: "str",
         port: "int",
         database_name: "str",
     ):
-        return f"postgresql+{dialect}://{user}:{password}@{host}:{port}/{database_name}"
+        if password is not None:
+            credential = f"{user}:{password}"
+        else:
+            credential = user
+        return f"postgresql+{dialect}://{credential}@{host}:{port}/{database_name}"
 
     def create_engine(self, url: "str"):
         return create_async_engine(url)
