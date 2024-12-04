@@ -19,10 +19,10 @@ class AsyncDatabase:
         port: "int" = 5432,
         database_name: "str" = "postgres",
     ):
-        url = self.get_url(dialect, user, password, host, port, database_name)
-        engine = self.create_engine(url)
-        session_factory = self.create_session_type(engine)
-        self.query_executor = self.set_query_executor(session_factory)
+        self.url = self.get_url(dialect, user, password, host, port, database_name)
+        self.engine = self.create_engine(self.url)
+        self.session_factory = self.create_session_type(self.engine)
+        self.query_executor = self.set_query_executor(self.session_factory)
 
     def get_url(
         self,
