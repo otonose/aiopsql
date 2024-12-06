@@ -7,37 +7,36 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
     from typing import Any
     from sqlalchemy import ColumnElement
+    from sqlalchemy.orm import DeclarativeBase
 
 
 class AsyncDatabase:
     def __init__(
         self,
-        dialect: "str" = "asyncpg",
         user: "str" = "postgres",
-        password: "str | None" = None,
+        password: "str" = "",
         host: "str" = "localhost",
         port: "int" = 5432,
         database_name: "str" = "postgres",
     ):
-        self.url = self.get_url(dialect, user, password, host, port, database_name)
+        self.url = self.get_url(user, password, host, port, database_name)
         self.engine = self.create_engine(self.url)
         self.session_factory = self.create_session_type(self.engine)
         self.query_executor = self.set_query_executor(self.session_factory)
 
     def get_url(
         self,
-        dialect: "str",
         user: "str",
-        password: "str | None",
+        password: "str",
         host: "str",
         port: "int",
         database_name: "str",
     ):
-        if password is not None:
+        if password:
             credential = f"{user}:{password}"
         else:
             credential = user
-        return f"postgresql+{dialect}://{credential}@{host}:{port}/{database_name}"
+        return f"postgresql+asyncpg://{credential}@{host}:{port}/{database_name}"
 
     def create_engine(self, url: "str"):
         return create_async_engine(url)
@@ -47,6 +46,10 @@ class AsyncDatabase:
 
     def set_query_executor(self, session_factory: "async_sessionmaker[AsyncSession]"):
         return AsyncQueryExecutor(session_factory)
+
+    async def create_all(self, entity: "DeclarativeBase"):
+        async with self.engine.begin() as conn:
+            await conn.run_sync(entity.metadata.create_all)
 
     async def select[
         T
