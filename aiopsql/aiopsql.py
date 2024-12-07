@@ -17,9 +17,9 @@ class AsyncDatabase:
         password: "str" = "",
         host: "str" = "localhost",
         port: "int" = 5432,
-        database_name: "str" = "postgres",
+        db: "str" = "postgres",
     ):
-        self.url = self.get_url(user, password, host, port, database_name)
+        self.url = self.get_url(user, password, host, port, db)
         self.engine = self.create_engine(self.url)
         self.session_factory = self.create_session_type(self.engine)
         self.query_executor = self.set_query_executor(self.session_factory)
@@ -30,13 +30,13 @@ class AsyncDatabase:
         password: "str",
         host: "str",
         port: "int",
-        database_name: "str",
+        db: "str",
     ):
         if password:
             credential = f"{user}:{password}"
         else:
             credential = user
-        return f"postgresql+asyncpg://{credential}@{host}:{port}/{database_name}"
+        return f"postgresql+asyncpg://{credential}@{host}:{port}/{db}"
 
     def create_engine(self, url: "str"):
         return create_async_engine(url)
